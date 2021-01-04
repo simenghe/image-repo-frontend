@@ -61,28 +61,9 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 export default function Album() {
   const classes = useStyles();
-  const history = useHistory();
-  async function handleLoginClick() {
-    history.push('/login');
-  }
-
-  async function handleUploadClick(){
-    history.push('/upload');
-  }
 
   return (
     <React.Fragment>
-      <CssBaseline />
-      <AppBar position="static">
-        <Toolbar>
-          <CameraIcon edge="start" className={classes.icon} />
-          <Typography className={classes.title} variant="h6" color="inherit" >
-            Image Repository
-          </Typography>
-          <Button onClick={handleUploadClick} color="inherit">Upload</Button>
-          <Button onClick={handleLoginClick} color="inherit">Login</Button>
-        </Toolbar>
-      </AppBar>
       <main>
         {/* Hero unit */}
         <div className={classes.heroContent}>
