@@ -22,3 +22,11 @@ export async function signInWithGoogle() {
         console.error(err);
     }
 }
+
+export async function signOutWithGoogle() {
+    auth.signOut().then(() => {
+        console.log(`Logged out!`);
+    }).catch(err => {
+        console.error(err.message);
+    });
+}
