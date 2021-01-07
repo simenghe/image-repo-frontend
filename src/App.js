@@ -12,8 +12,8 @@ import SignOutPage from './components/SignoutPage';
 function App() {
 
   return (
-    <UserProvider>
-      <Router>
+    <Router>
+      <UserProvider>
         <CssBaseline />
         <NavBar />
         <div>
@@ -35,8 +35,8 @@ function App() {
             </Route>
           </Switch>
         </div>
-      </Router>
-    </UserProvider>
+      </UserProvider>
+    </Router>
   );
 }
 

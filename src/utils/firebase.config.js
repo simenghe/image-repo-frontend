@@ -13,20 +13,3 @@ firebase.initializeApp(firebaseConfig);
 
 export const auth = firebase.auth();
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
-
-export async function signInWithGoogle() {
-    try {
-        const credential = await auth.signInWithPopup(googleProvider);
-        console.log(credential);
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-export async function signOutWithGoogle() {
-    auth.signOut().then(() => {
-        console.log(`Logged out!`);
-    }).catch(err => {
-        console.error(err.message);
-    });
-}

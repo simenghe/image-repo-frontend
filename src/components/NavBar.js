@@ -48,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
 function NavBar() {
     const classes = useStyles();
     const { curUser } = useContext(UserContext);
-    console.log(curUser);
     return (
         <AppBar position="static">
             <Toolbar>
@@ -56,8 +55,8 @@ function NavBar() {
                     <Button color="inherit"><CameraIcon edge="start" className={classes.icon} /></Button>
                 </Link>
                 <Typography className={classes.title} variant="h6" color="inherit" >
-                    Image Repository
-          </Typography>
+                    <Link className="link" to="/">Image Repository</Link>
+                </Typography>
                 <Link className="link" to="/upload" color="inherit">
                     <Button color="inherit">Upload</Button>
                 </Link>

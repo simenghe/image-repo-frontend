@@ -1,4 +1,5 @@
 import React, { useEffect, useState, createContext, useContext } from "react";
+import { useHistory } from "react-router-dom";
 import { auth, googleProvider } from '../utils/firebase.config';
 
 export const UserContext = createContext();
@@ -6,11 +7,12 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
     const [curUser, setCurUser] = useState(null);
     const [pending, setPending] = useState(true);
+    const history = useHistory();
 
     async function handleLogin() {
         try {
             const credential = await auth.signInWithPopup(googleProvider);
-            console.log(credential);
+            history.push('/');
         } catch (err) {
             console.error(err);
         }
@@ -28,7 +30,6 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const unsub = auth.onAuthStateChanged((user) => {
             console.log("Change");
-            console.log(user);
             setCurUser(user);
             setPending(false);
         });
@@ -38,7 +39,6 @@ export const UserProvider = ({ children }) => {
     if (pending) {
         return <>Loading...</>;
     }
-    console.log(curUser);
     const value = {
         curUser,
         handleLogin,

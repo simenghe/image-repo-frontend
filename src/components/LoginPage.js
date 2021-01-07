@@ -1,12 +1,13 @@
 import { useContext } from 'react';
 import GoogleButton from 'react-google-button';
+import { Redirect } from 'react-router-dom';
 import { UserContext } from '../context/UserProvider';
-import { auth, googleProvider } from '../utils/firebase.config';
 
 function LoginPage() {
-    const { handleLogin } = useContext(UserContext);
-
-    console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+    const { handleLogin, curUser } = useContext(UserContext);
+    if (curUser) {
+        return <Redirect to="/" />
+    }
     return (
         <div className="App">
             <header className="App-header">
@@ -16,6 +17,6 @@ function LoginPage() {
                 />
             </header>
         </div>
-    );
+    )
 }
 export default LoginPage;
