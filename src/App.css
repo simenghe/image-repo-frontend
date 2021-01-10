@@ -38,9 +38,13 @@
 }
 
 .link {
-  color: #FFF;
+  color: #fff;
   text-decoration: none;
 }
 .link:hover {
-   color: #FFF
+  color: #fff;
+}
+
+.checkboxtext {
+  font-size: 10pt;
 }

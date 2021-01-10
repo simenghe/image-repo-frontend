@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 import { useState } from 'react';
-import { SentimentSatisfied } from '@material-ui/icons';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import { UserContext } from '../context/UserProvider';
 
-
+const url = process.env.REACT_APP_SERVER_URL + '/images/upload';
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -66,17 +67,20 @@ const useStyles = makeStyles((theme) => ({
 export default function Checkout() {
   const classes = useStyles();
   const [files, setFiles] = useState([]);
+  const [publicUpload, setPublicUpload] = useState(false);
+  const { getIdToken, curUser } = useContext(UserContext);
 
-  async function handleUpload(e) {
-    e.preventDefault();
-    const url = process.env.REACT_APP_SERVER_URL + '/images/upload';
-    console.log(url);
+  async function handleCheckbox(e) {
+    setPublicUpload(e.target.checked);
+  }
+
+  async function handlePublicUpload() {
     try {
       if (files.length > 0) {
         const formData = new FormData();
         formData.append('file', files[0]);
         const config = {
-          'content-type': 'multipart/form-data'
+          'content-type': 'multipart/form-data',
         }
         const resp = await axios.post(url, formData, config);
         console.log(resp);
@@ -84,6 +88,21 @@ export default function Checkout() {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  async function handleUpload(e) {
+    e.preventDefault();
+    const newUrl = process.env.REACT_APP_SERVER_URL + "/storage/testauth";
+    console.log(newUrl);
+    const config = {
+      'content-type': 'multipart/form-data',
+      headers: {
+        'Authorization': `token ${await getIdToken()}`,
+        'UID': `${curUser.uid}`,
+      }
+    }
+    const resp = await axios.post(newUrl, curUser, config);
+    console.log(resp);
   }
 
   async function onChange(e) {
@@ -102,6 +121,12 @@ export default function Checkout() {
             Upload Images Here
             <form onSubmit={handleUpload}>
               <input type="file" name="file" onChange={onChange} accept="image/*" multiple />
+              <br />
+              <FormControlLabel labelPlacement="bottom" className="checkboxtext" control={<Checkbox
+                checked={publicUpload}
+                onChange={handleCheckbox}
+                inputProps={{ 'aria-label': 'primary checkbox' }}
+              />} label="Public" />
               <br />
               <button>Upload</button>
             </form>

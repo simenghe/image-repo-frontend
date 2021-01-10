@@ -57,6 +57,9 @@ function NavBar() {
                 <Typography className={classes.title} variant="h6" color="inherit" >
                     <Link className="link" to="/">Image Repository</Link>
                 </Typography>
+                <Link className="link" to="/myimages" color="inherit">
+                    <Button color="inherit">My Images</Button>
+                </Link>
                 <Link className="link" to="/upload" color="inherit">
                     <Button color="inherit">Upload</Button>
                 </Link>

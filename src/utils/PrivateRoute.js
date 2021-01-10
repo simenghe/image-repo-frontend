@@ -1,22 +1,17 @@
-import React, { useContext } from "react";
-import { Route, Redirect } from "react-router-dom";
-import { UserContext } from "../context/UserProvider";
+import React, { useContext } from "react"
+import { Route, Redirect } from "react-router-dom"
+import { UserContext } from '../context/UserProvider';
 
-const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
-    const { currentUser } = useContext(UserContext);
+export default function PrivateRoute({ component: Component, ...rest }) {
+
+    const { curUser } = useContext(UserContext);
+    console.log(curUser);
     return (
         <Route
             {...rest}
-            render={routeProps =>
-                !!currentUser ? (
-                    <RouteComponent {...routeProps} />
-                ) : (
-                        <Redirect to={"/login"} />
-                    )
-            }
-        />
-    );
-};
-
-
-export default PrivateRoute
+            render={props => {
+                return curUser ? <Component {...props} /> : <Redirect to="/login" />
+            }}
+        ></Route>
+    )
+}

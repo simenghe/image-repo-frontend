@@ -26,6 +26,16 @@ export const UserProvider = ({ children }) => {
         });
     }
 
+    async function getIdToken() {
+        try {
+            const idToken = await auth.currentUser.getIdToken(true);
+            console.log(idToken);
+            return idToken;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
 
     useEffect(() => {
         const unsub = auth.onAuthStateChanged((user) => {
@@ -43,6 +53,7 @@ export const UserProvider = ({ children }) => {
         curUser,
         handleLogin,
         handleLogout,
+        getIdToken,
     }
     return (
         <UserContext.Provider

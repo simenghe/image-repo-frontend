@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useContext } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,6 +7,7 @@ import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 import ImageCard from './ImageCard';
 import { useEffect } from 'react';
+import { UserContext } from '../context/UserProvider';
 
 function Copyright() {
   return (
@@ -54,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-export default function Album() {
+export default function MyImagePage() {
   const classes = useStyles();
 
   // Grab all public images
@@ -69,7 +71,7 @@ export default function Album() {
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-              Browse Images
+              Browse Your Images
             </Typography>
             <div className={classes.heroButtons}>
             </div>

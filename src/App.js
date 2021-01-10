@@ -8,7 +8,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { UserContext, UserProvider } from './context/UserProvider';
 import NavBar from './components/NavBar';
 import SignOutPage from './components/SignoutPage';
-
+import MyImagePage from './components/MyImagePage';
+import PrivateRoute from './utils/PrivateRoute';
 function App() {
 
   return (
@@ -27,9 +28,10 @@ function App() {
             <Route path="/login">
               <LoginPage />
             </Route>
-            <Route path="/signout">
-              <SignOutPage />
-            </Route>
+            <PrivateRoute path="/signout" component={SignOutPage}>
+            </PrivateRoute>
+            <PrivateRoute path="/myimages" component={MyImagePage}>
+            </PrivateRoute>
             <Route path="/">
               <ImagePage />
             </Route>
