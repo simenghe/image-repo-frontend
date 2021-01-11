@@ -4,9 +4,16 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Link from "@material-ui/core/Link";
-import ImageCard from "./ImageCard";
 import { useEffect } from "react";
 import axios from "axios";
+import { ImagesContext } from "../context/ImagesProvider";
+import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import { UserContext } from "../context/UserProvider";
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -53,23 +60,50 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MyImagePage() {
   const classes = useStyles();
-  const [imageURLs, setImageURLs] = useState([]);
+  const [images, setImages] = useContext(ImagesContext);
+  const { getIdToken, curUser } = useContext(UserContext);
+
+  async function handleRemove(id) {
+    console.log(`Removing image ${id}`);
+    const result = window.confirm(`Are you sure you want to remove image ${id}`);
+    console.log(result);
+    if (result) {
+      setImages(prev => prev.filter(image => image.id !== id));
+      const url = process.env.REACT_APP_SERVER_URL + "/images/delete/" + id;
+      const config = {
+        headers: {
+          'Authorization': `token ${await getIdToken()}`,
+          'UID': `${curUser.uid}`,
+          'publicupload': false,
+        }
+      }
+      const resp = await axios.delete(url, config);
+      console.log(resp);
+    }
+  }
 
   // Grab all public images
   useEffect(() => {
     async function fetchImageUrls() {
+      const config = {
+        headers: {
+          'Authorization': `token ${await getIdToken()}`,
+          'UID': `${curUser.uid}`,
+          'publicupload': false,
+        }
+      }
       const url = process.env.REACT_APP_SERVER_URL + "/images/getuserurls";
-      const resp = await axios.get(url);
+      const resp = await axios.get(url, config);
       console.log(resp);
       if (resp.status === 200) {
         if (resp.data.length > 0) {
-          setImageURLs(resp.data);
+          setImages(resp.data);
         }
         // setImageURLs(resp.data);
       }
     }
     fetchImageUrls();
-  }, []);
+  }, [setImages, curUser.uid, getIdToken]);
 
   return (
     <React.Fragment>
@@ -92,9 +126,32 @@ export default function MyImagePage() {
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={3}>
-            {imageURLs.map((file) => (
+            {images.map((file) => (
               <Grid item key={file.id} xs={12} sm={6} md={4}>
-                <ImageCard id={file.id} url={file.signedUrl} date={file.date} />
+                {/* <ImageCard id={file.id} url={file.signedUrl} date={file.date} /> */}
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image={file.signedUrl}
+                    title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {file.id}
+                    </Typography>
+                    <Typography>
+                      {`Uploaded : ${new Date(file.date).toLocaleDateString()}`}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button href={file.signedUrl} target="_blank" size="small" color="primary">
+                      View
+                  </Button>
+                    <Button onClick={() => handleRemove(file.id)} size="small" color="primary">
+                      Remove
+                    </Button>
+                  </CardActions>
+                </Card>
               </Grid>
             ))}
           </Grid>
@@ -116,6 +173,6 @@ export default function MyImagePage() {
         <Copyright />
       </footer>
       {/* End footer */}
-    </React.Fragment>
+    </React.Fragment >
   );
 }

@@ -11,7 +11,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { UserContext } from '../context/UserProvider';
 
-const url = process.env.REACT_APP_SERVER_URL + '/images/upload';
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -75,12 +74,30 @@ export default function Checkout() {
   }
 
   async function handlePublicUpload() {
+    let url = process.env.REACT_APP_SERVER_URL + '/images/upload';
     try {
-      if (files.length > 0) {
-        const formData = new FormData();
+      const config = {
+        'content-type': 'multipart/form-data',
+        headers: {
+          'Authorization': `token ${await getIdToken()}`,
+          'UID': `${curUser.uid}`,
+          'publicupload': publicUpload,
+        }
+      }
+      const formData = new FormData();
+      if (!files) {
+        return;
+      }
+      if (files.length === 1) {
         formData.append('file', files[0]);
-        const config = {
-          'content-type': 'multipart/form-data',
+        console.log(formData);
+        const resp = await axios.post(url, formData, config);
+        console.log(resp);
+      }
+      if (files.length > 1) {
+        url = process.env.REACT_APP_SERVER_URL + '/images/uploadmultiple';
+        for (let i = 0; i < files.length; i++) {
+          formData.append('images', files[i]);
         }
         const resp = await axios.post(url, formData, config);
         console.log(resp);
@@ -92,17 +109,22 @@ export default function Checkout() {
 
   async function handleUpload(e) {
     e.preventDefault();
-    const newUrl = process.env.REACT_APP_SERVER_URL + "/storage/testauth";
-    console.log(newUrl);
-    const config = {
-      'content-type': 'multipart/form-data',
-      headers: {
-        'Authorization': `token ${await getIdToken()}`,
-        'UID': `${curUser.uid}`,
-      }
-    }
-    const resp = await axios.post(newUrl, curUser, config);
-    console.log(resp);
+    // const newUrl = process.env.REACT_APP_SERVER_URL + "/storage/testauth";
+    // console.log(newUrl);
+    // const config = {
+    //   'content-type': 'multipart/form-data',
+    //   headers: {
+    //     'Authorization': `token ${await getIdToken()}`,
+    //     'UID': `${curUser.uid}`,
+    //     'publicupload': true,
+    //   }
+    // }
+    // const resp = await axios.post(newUrl, curUser, config);
+    // console.log(resp);
+    handlePublicUpload();
+    // setFiles([]);
+    // e.target.files = [];
+
   }
 
   async function onChange(e) {

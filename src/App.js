@@ -10,36 +10,39 @@ import NavBar from "./components/NavBar";
 import SignOutPage from "./components/SignoutPage";
 import MyImagePage from "./components/MyImagePage";
 import PrivateRoute from "./utils/PrivateRoute";
+import { ImagesProvider } from "./context/ImagesProvider";
 function App() {
   return (
     <Router>
       <UserProvider>
-        <CssBaseline />
-        <NavBar />
-        <div>
-          <Switch>
-            <Route path="/upload">
-              <UploadPage />
-            </Route>
-            <Route path="/imagecard">
-              <ImageCard />
-            </Route>
-            <Route path="/login">
-              <LoginPage />
-            </Route>
-            <PrivateRoute
-              path="/signout"
-              component={SignOutPage}
-            ></PrivateRoute>
-            <PrivateRoute
-              path="/myimages"
-              component={MyImagePage}
-            ></PrivateRoute>
-            <Route path="/">
-              <ImagePage />
-            </Route>
-          </Switch>
-        </div>
+        <ImagesProvider>
+          <CssBaseline />
+          <NavBar />
+          <div>
+            <Switch>
+              <Route path="/upload">
+                <UploadPage />
+              </Route>
+              <Route path="/imagecard">
+                <ImageCard />
+              </Route>
+              <Route path="/login">
+                <LoginPage />
+              </Route>
+              <PrivateRoute
+                path="/signout"
+                component={SignOutPage}
+              ></PrivateRoute>
+              <PrivateRoute
+                path="/myimages"
+                component={MyImagePage}
+              ></PrivateRoute>
+              <Route path="/">
+                <ImagePage />
+              </Route>
+            </Switch>
+          </div>
+        </ImagesProvider>
       </UserProvider>
     </Router>
   );

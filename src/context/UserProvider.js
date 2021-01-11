@@ -11,7 +11,7 @@ export const UserProvider = ({ children }) => {
 
     async function handleLogin() {
         try {
-            const credential = await auth.signInWithPopup(googleProvider);
+            await auth.signInWithPopup(googleProvider);
             history.push('/');
         } catch (err) {
             console.error(err);
