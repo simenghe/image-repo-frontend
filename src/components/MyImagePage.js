@@ -12,6 +12,7 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import Checkbox from '@material-ui/core/Checkbox';
 import { UserContext } from "../context/UserProvider";
 
 function Copyright() {
@@ -33,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
   },
   heroButtons: {
     marginTop: theme.spacing(4),
+  },
+
+  checkBox: {
+    marginBottom: theme.spacing(0.5),
   },
   cardGrid: {
     paddingTop: theme.spacing(8),
@@ -62,6 +67,7 @@ export default function MyImagePage() {
   const classes = useStyles();
   const [images, setImages] = useContext(ImagesContext);
   const { getIdToken, curUser } = useContext(UserContext);
+  const [selected, setSelected] = useState({});
 
   async function handleRemove(id) {
     console.log(`Removing image ${id}`);
@@ -80,6 +86,33 @@ export default function MyImagePage() {
       const resp = await axios.delete(url, config);
       console.log(resp);
     }
+  }
+
+  async function handleBatchRemove() {
+    const toRemove = [];
+    for (const key in selected) {
+      if (selected[key] === true) {
+        toRemove.push(key);
+      }
+    }
+    console.log(`Removing images ${toRemove}`);
+    const result = window.confirm(`Are you sure you want to remove image ${toRemove}`);
+    if (result) {
+      setImages(prev => (prev.filter(x => !selected[x.id])));
+      console.log(`Removing ${toRemove}`);
+      setSelected({});
+      const body = {
+        ids: toRemove
+      }
+      
+    }
+  }
+
+  async function handleChecked(e, id) {
+    setSelected(prev => ({
+      ...prev, [id]: e.target.checked,
+    }));
+    console.log(selected);
   }
 
   // Grab all public images
@@ -119,6 +152,11 @@ export default function MyImagePage() {
               gutterBottom
             >
               Browse Your Images
+              {Object.values(selected).some(x => x === true) ?
+                <Button size="large" onClick={handleBatchRemove} color="secondary">Remove</Button>
+                :
+                <Button disabled={true} size="large" color="secondary"></Button>
+              }
             </Typography>
             <div className={classes.heroButtons}></div>
           </Container>
@@ -144,10 +182,18 @@ export default function MyImagePage() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button href={file.signedUrl} target="_blank" size="small" color="primary">
+                  </CardActions>
+                  <CardActions>
+                    <Checkbox
+                      onChange={(e) => handleChecked(e, file.id)}
+                      className={classes.checkBox}
+                      size="small"
+                      inputProps={{ 'aria-label': 'primary checkbox' }}
+                    />
+                    <Button size="large" href={file.signedUrl} target="_blank" color="primary">
                       View
                   </Button>
-                    <Button onClick={() => handleRemove(file.id)} size="small" color="primary">
+                    <Button onClick={() => handleRemove(file.id)} size="large" color="primary">
                       Remove
                     </Button>
                   </CardActions>

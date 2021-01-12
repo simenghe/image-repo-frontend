@@ -86,21 +86,23 @@ export default function Checkout() {
       }
       const formData = new FormData();
       if (!files) {
+        console.log("No Files!");
         return;
       }
-      if (files.length === 1) {
-        formData.append('file', files[0]);
-        console.log(formData);
-        const resp = await axios.post(url, formData, config);
-        console.log(resp);
-      }
-      if (files.length > 1) {
+      // if (files.length === 1) {
+      //   formData.append('file', files[0]);
+      //   console.log(formData);
+      //   const resp = await axios.post(url, formData, config);
+      //   console.log(resp);
+      // }
+      if (files.length > 0) {
         url = process.env.REACT_APP_SERVER_URL + '/images/uploadmultiple';
         for (let i = 0; i < files.length; i++) {
           formData.append('images', files[i]);
         }
         const resp = await axios.post(url, formData, config);
         console.log(resp);
+        window.confirm("Success!")
       }
     } catch (err) {
       console.error(err);
@@ -108,7 +110,8 @@ export default function Checkout() {
   }
 
   async function handleUpload(e) {
-    e.preventDefault();
+    await e.preventDefault();
+    await handlePublicUpload();
     // const newUrl = process.env.REACT_APP_SERVER_URL + "/storage/testauth";
     // console.log(newUrl);
     // const config = {
@@ -121,7 +124,6 @@ export default function Checkout() {
     // }
     // const resp = await axios.post(newUrl, curUser, config);
     // console.log(resp);
-    handlePublicUpload();
     // setFiles([]);
     // e.target.files = [];
 
