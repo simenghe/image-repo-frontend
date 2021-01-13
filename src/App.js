@@ -22,9 +22,8 @@ function App() {
             <NavBar />
             <div>
               <Switch>
-                <Route path="/upload">
-                  <UploadPage />
-                </Route>
+                <PrivateRoute component={UploadPage} path="/upload">
+                </PrivateRoute>
                 <Route path="/imagecard">
                   <ImageCard />
                 </Route>
