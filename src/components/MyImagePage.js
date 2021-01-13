@@ -89,22 +89,36 @@ export default function MyImagePage() {
   }
 
   async function handleBatchRemove() {
-    const toRemove = [];
-    for (const key in selected) {
-      if (selected[key] === true) {
-        toRemove.push(key);
+    const url = process.env.REACT_APP_SERVER_URL + "/images/removebatch";
+    try {
+      const toRemove = [];
+      for (const key in selected) {
+        if (selected[key] === true) {
+          toRemove.push(key);
+        }
       }
-    }
-    console.log(`Removing images ${toRemove}`);
-    const result = window.confirm(`Are you sure you want to remove image ${toRemove}`);
-    if (result) {
-      setImages(prev => (prev.filter(x => !selected[x.id])));
-      console.log(`Removing ${toRemove}`);
-      setSelected({});
-      const body = {
-        ids: toRemove
+      console.log(`Removing images ${toRemove}`);
+      const result = window.confirm(`Are you sure you want to remove image ${toRemove}`);
+      if (result) {
+        setImages(prev => (prev.filter(x => !selected[x.id])));
+        console.log(`Removing ${toRemove}`);
+        setSelected({});
+        const body = {
+          ids: toRemove
+        }
+        const config = {
+          headers: {
+            'Content-Type' : 'application/json',
+            'Authorization': `token ${await getIdToken()}`,
+            'UID': `${curUser.uid}`,
+          }
+        }
+        console.log("Before URL");
+        const resp = await axios.post(url, body, config);
+        console.log(resp);
       }
-      
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -118,21 +132,25 @@ export default function MyImagePage() {
   // Grab all public images
   useEffect(() => {
     async function fetchImageUrls() {
-      const config = {
-        headers: {
-          'Authorization': `token ${await getIdToken()}`,
-          'UID': `${curUser.uid}`,
-          'publicupload': false,
+      try {
+        const config = {
+          headers: {
+            'Authorization': `token ${await getIdToken()}`,
+            'UID': `${curUser.uid}`,
+            'publicupload': false,
+          }
         }
-      }
-      const url = process.env.REACT_APP_SERVER_URL + "/images/getuserurls";
-      const resp = await axios.get(url, config);
-      console.log(resp);
-      if (resp.status === 200) {
-        if (resp.data.length > 0) {
-          setImages(resp.data);
+        const url = process.env.REACT_APP_SERVER_URL + "/images/getuserurls";
+        const resp = await axios.get(url, config);
+        console.log(resp);
+        if (resp.status === 200) {
+          if (resp.data.length > 0) {
+            setImages(resp.data);
+          }
+          // setImageURLs(resp.data);
         }
-        // setImageURLs(resp.data);
+      } catch (err) {
+        console.error(err);
       }
     }
     fetchImageUrls();
@@ -153,7 +171,7 @@ export default function MyImagePage() {
             >
               Browse Your Images
               {Object.values(selected).some(x => x === true) ?
-                <Button size="large" onClick={handleBatchRemove} color="secondary">Remove</Button>
+                <Button size="large" onClick={() => handleBatchRemove()} color="secondary">Remove</Button>
                 :
                 <Button disabled={true} size="large" color="secondary"></Button>
               }

@@ -29,7 +29,7 @@ export const UserProvider = ({ children }) => {
     async function getIdToken() {
         try {
             const idToken = await auth.currentUser.getIdToken(true);
-            console.log(idToken);
+            // console.log(idToken);
             return idToken;
         } catch (err) {
             console.error(err);

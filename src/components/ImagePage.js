@@ -68,14 +68,18 @@ export default function ImagePage() {
   // Grab all public images
   useEffect(() => {
     async function fetchImageUrls() {
-      const url = process.env.REACT_APP_SERVER_URL + "/images/getpublicurls";
-      const resp = await axios.get(url);
-      console.log(resp);
-      if (resp.status === 200) {
-        if (resp.data.length > 0) {
-          setPublicImages(resp.data);
+      try {
+        const url = process.env.REACT_APP_SERVER_URL + "/images/getpublicurls";
+        const resp = await axios.get(url);
+        console.log(resp);
+        if (resp.status === 200) {
+          if (resp.data.length > 0) {
+            setPublicImages(resp.data);
+          }
+          // setImageURLs(resp.data);
         }
-        // setImageURLs(resp.data);
+      } catch (err) {
+        console.error(err);
       }
     }
     fetchImageUrls();
